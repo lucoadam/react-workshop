@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 
 export const UserContext = createContext()
 
@@ -14,16 +14,27 @@ export const UserProvider = ({ children }) => {
     const [users, setUsers] = useState([])
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
+    useEffect(()=>{
+        init()
+    }, [])
+
     const init = () => {
         console.log("Initialize User Provider")
         // restoring user from local storage
         try{
             const userListString = window.localStorage.getItem("users")
+            const userString = localStorage.getItem("currentUser")
 
             if(!!userListString){
                 const userArray = JSON.parse(userListString)
                 console.log(userArray)
                 setUsers(userArray)
+            }
+
+            if(!!userString) {
+                const userObject = JSON.parse(userString)
+                setUser(userObject)
+                setIsLoggedIn(true)
             }
         }catch(e){
             console.log(e)
@@ -48,9 +59,9 @@ export const UserProvider = ({ children }) => {
         }
 
         
-        
-
-        setUser(users.find(each => each.email === email && each.password === password))
+        const loggedInUser = users.find(each => each.email === email && each.password === password)
+        localStorage.setItem("currentUser", JSON.stringify(loggedInUser))
+        setUser(loggedInUser)
         setIsLoggedIn(true)
 
         return {

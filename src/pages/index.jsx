@@ -1,30 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Layout from "../layouts";
 import IndexForm from "../components/indexform";
 import ListItems from "../components/listitems";
-import { UserContext } from "../contexts/usercontext";
-
-
-const obj = {
-  a1: "sdfldsjf"
-}
-function add(n1, n2){
-  return n1 +n2
-}
-
-let a=1, b=2
-
-add(a,b)
 
 const Index = () => {
 
-  const {init} = useContext(UserContext)
-
   const [items, setItems] = useState([]);
 
-  useEffect(()=>{
-    init()
-  }, [])
   const onSubmit = (data) => {
     console.log("Data to be submitted:", data)
     // const a1 = items

@@ -5,6 +5,7 @@ import Login from "../pages/login";
 
 const Layout = ({ children }) => {
   const {isLoggedIn} = useContext(UserContext)
+  console.log(isLoggedIn, children)
   return (
     <div 
       className="mx-20 my-5 flex flex-col items-center"
