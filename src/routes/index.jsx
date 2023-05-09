@@ -4,6 +4,7 @@ import Contact from "../pages/contact";
 import ContextPage from "../pages/context";
 import ItemsPage from "../pages/items";
 import Page404 from "../pages/Page404";
+import UsersPage from "../pages/users";
 
 export const routes = [
   {
@@ -34,5 +35,10 @@ export const routes = [
     name: "Items",
     path: "/items",
     element: <ItemsPage/>
+  },
+  {
+    path: "/users",
+    name: "Users",
+    element: <UsersPage/>
   }
 ];
