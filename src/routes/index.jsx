@@ -5,6 +5,8 @@ import ContextPage from "../pages/context";
 import ItemsPage from "../pages/items";
 import Page404 from "../pages/Page404";
 import UsersPage from "../pages/users";
+import CreateOrEditUser from "../pages/users/createOrEdit";
+import ViewUser from "../pages/users/view";
 
 export const routes = [
   {
@@ -40,5 +42,17 @@ export const routes = [
     path: "/users",
     name: "Users",
     element: <UsersPage/>
-  }
+  },
+  {
+    path: "/users/create",
+    element: <CreateOrEditUser/>
+  },
+  {
+    path: "/users/:id",
+    element: <ViewUser/>
+  },
+  {
+    path: "/users/:id/edit",
+    element: <CreateOrEditUser/>
+  },
 ];

@@ -1,3 +1,3 @@
 export default {
-    API_URL: "https://backendtest-workshop.herokuapp.com/"
+    API_URL: "http://localhost:8000/"
 }
