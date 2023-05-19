@@ -37,12 +37,25 @@ export const useUsers = () => {
         setLoading(false)
     }
 
+    const createUser = async ({
+        name,
+        age
+    }) => {
+        setLoading(true)
+        await postUser({
+            name,
+            age
+        })
+        setLoading(false)
+    }
 
-    const editUser = async(id,name,age)=>{
+
+    const editUser = async({
+        id,name,age
+    })=>{
         setLoading(true)
         
-        const userResponse = await updateUser({id,name,age})
-        setUser(prevUser=>prevUser.map(user=>(userResponse.id===user.id?userResponse:user)))   
+        const userResponse = await updateUser({_id:id,name,age})
         setLoading(false)
     }
     return {
@@ -51,6 +64,7 @@ export const useUsers = () => {
         getUserById,
         removeUser,
         editUser,
+        createUser,
         loading
     }
 }

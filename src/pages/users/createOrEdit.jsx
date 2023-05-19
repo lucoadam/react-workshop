@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../layouts'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import Card from '../../components/card'
 import Button from '../../components/button'
 import { useUsers } from '../../hooks/useUsers'
+import { toast } from 'react-hot-toast'
 
 const CreateOrEditUser = () => {
 
   const params = useParams()
-  const {getUserById} = useUsers()
+  const navigate = useNavigate()
+  const {getUserById, createUser,editUser } = useUsers()
 
   const [data, setData] = useState({
     name: '',
@@ -23,17 +25,28 @@ const CreateOrEditUser = () => {
     }
   }, [params.id])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    let message;
     if(params.id){
-      console.log('edit')
+      await editUser({
+        id: params.id,
+        ...data,
+      })
+      message = "User updated successfully."
     }else{
-      console.log('create')
+      await createUser({
+        name: data.name,
+        age: data.age
+      })
+      message = "User created successfully."
     }
+    toast.success(message)
+    navigate("/users")
 
-    
+    // setTimeout(()=>{
+    // }, 500) // delay navigation by 0.5 sec
   }
-  console.log('value of params', params)
   return (
     <Layout>
       <Card>
