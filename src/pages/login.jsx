@@ -52,9 +52,9 @@ const Login = () => {
     console.log(signupData, 'signupdata')
     // setSignupData()
   }
-  const onLogin = (e) => {
+  const onLogin = async (e) => {
     e.preventDefault()
-    const response = loginUser(loginData);
+    const response = await loginUser(loginData);
     console.log("Login response", response)
     if (response.error) {
       setError({

@@ -17,6 +17,18 @@ import axiosInstance from "./axiosInstance"
 // }
 
 // completely asynchronos which returns promise as a whole
+export const loginUserApi = async ({
+    email, 
+    password
+}) => {
+    const result = await axiosInstance.post("/api/login", {
+        email,
+        password
+    })
+
+    return result.data
+}
+
 export const getUsers = async () => {
     //start
     const result = await axiosInstance.get("/api/users")  // fulfilled, rejected

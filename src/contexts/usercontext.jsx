@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
+import { loginUserApi } from "../api/users"
 
 export const UserContext = createContext()
 
@@ -14,34 +15,34 @@ export const UserProvider = ({ children }) => {
     const [users, setUsers] = useState([])
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-    useEffect(()=>{
+    useEffect(() => {
         init()
     }, [])
 
     const init = () => {
         console.log("Initialize User Provider")
         // restoring user from local storage
-        try{
+        try {
             const userListString = window.localStorage.getItem("users")
             const userString = localStorage.getItem("currentUser")
 
-            if(!!userListString){
+            if (!!userListString) {
                 const userArray = JSON.parse(userListString)
                 console.log(userArray)
                 setUsers(userArray)
             }
 
-            if(!!userString) {
+            if (!!userString) {
                 const userObject = JSON.parse(userString)
                 setUser(userObject)
                 setIsLoggedIn(true)
             }
-        }catch(e){
+        } catch (e) {
             console.log(e)
         }
     }
 
-    const loginUser = ({
+    const loginUser = async ({
         email,
         password
     }) => {
@@ -50,23 +51,31 @@ export const UserProvider = ({ children }) => {
                 error: "All fields are required"
             }
         }
-        const filteredUsers = users.filter(each=>each.email === email && each.password === password)
 
-        if (filteredUsers.length === 0) {
+        try {
+            const userResponse = await loginUserApi({
+                email,
+                password
+            })
+            console.log('userdata from backend', userResponse)
+            localStorage.setItem("currentUser", JSON.stringify({
+                email
+            }))
+            localStorage.setItem("accessToken", userResponse.data.accessToken)
+            setUser({
+                email
+            })
+            setIsLoggedIn(true)
+    
             return {
-                error: "User doesnot exist"
+                success: true
             }
-        }
 
-        
-        const loggedInUser = users.find(each => each.email === email && each.password === password)
-        localStorage.setItem("currentUser", JSON.stringify(loggedInUser))
-        setUser(loggedInUser)
-        setIsLoggedIn(true)
-
-        return {
-            success: true
-        }
+        } catch (e) {
+            return {
+                error: e?.response?.data?.message ?? "Something went wrong"
+            }
+        }      
     }
 
     const registerUser = ({
@@ -100,8 +109,8 @@ export const UserProvider = ({ children }) => {
         }
 
 
-        setUsers(prev =>{
-            const updatedUserArray =  [
+        setUsers(prev => {
+            const updatedUserArray = [
                 {
                     name,
                     email,
