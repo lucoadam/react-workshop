@@ -6,10 +6,12 @@ import Button from '../../components/button'
 import { Link, useNavigate } from 'react-router-dom'
 import Modal from '../../components/modal'
 import { toast } from 'react-hot-toast'
+import { useUserContext } from '../../contexts/usercontext'
 
 const UsersPage = () => {
     const navigate = useNavigate()
     const { users, loading, removeUser } = useUsers()
+    const { user: currentUser } = useUserContext()
 
     const [showDelete, setShowDelete] = useState(false)
     // const [showView, setShowView] = useState(false)
@@ -24,7 +26,7 @@ const UsersPage = () => {
     }
     return (
         <Layout>
-            <Modal 
+            <Modal
                 open={showDelete}
                 className="w-[400px]"
             >
@@ -33,16 +35,16 @@ const UsersPage = () => {
                     <small className='text-sm'>You are about to delete a user with {selectedUser?.name} and of age {selectedUser?.age}.</small>
                 </div>
                 <div className='flex justify-end gap-4'>
-                    <Button 
+                    <Button
                         onClick={
-                            ()=>{
+                            () => {
                                 handleClick(selectedUser)
                             }
                         }
                         text="Yes"
                     />
                     <Button text="Cancel" onClick={
-                        ()=>setShowDelete(false)
+                        () => setShowDelete(false)
                     } />
                 </div>
             </Modal>
@@ -54,15 +56,19 @@ const UsersPage = () => {
             <Card>
                 <div className='flex w-full justify-between items-center'>
                     <h1 className='text-2xl text-primary'>Users</h1>
-                    <Link to="/users/create">
+                    {currentUser.role === 'admin' && <Link to="/users/create">
                         <Button text={"Create user"} />
-                    </Link>
+                    </Link>}
                 </div>
                 <div>
                     <table className='table-auto border-collapse border border-slate-500 text-center '>
                         <tr>
                             <th className='border border-slate-600 px-3 py-2 '>Name</th>
+                            <th className='border border-slate-600 px-3 py-2'>Email</th>
+                            <th className='border border-slate-600 px-3 py-2'>Address</th>
+
                             <th className='border border-slate-600 px-3 py-2'>Age</th>
+                            <th className='border border-slate-600 px-3 py-2'>Role</th>
                             <th className='border border-slate-600 px-3 py-2'>Actions</th>
 
                         </tr>
@@ -76,7 +82,16 @@ const UsersPage = () => {
                                 {user.name}
                             </td>
                             <td className='border border-slate-600 '>
+                                {user.email}
+                            </td>
+                            <td className='border border-slate-600 '>
+                                {user.address}
+                            </td>
+                            <td className='border border-slate-600 '>
                                 {user.age}
+                            </td>
+                            <td className='border border-slate-600 '>
+                                {user.role ?? 'User'}
                             </td>
                             <td className='border border-slate-600 flex px-4 gap-3 '>
                                 {[
@@ -96,12 +111,20 @@ const UsersPage = () => {
                                     {
                                         label: 'Delete',
                                         onClick: () => {
+                                            if(currentUser.email === user.email){
+                                                toast.error("You cannot delete yourself.")
+                                                return
+                                            }
                                             setShowDelete(true)
                                             setSelectedUser(user)
                                         }
 
                                     }
-                                ].map(action => <Button key={action.label} text={action.label} onClick={action.onClick} />)
+                                ].filter(
+                                    actionButton =>
+                                        currentUser.role === 'user' && ['View'].includes(actionButton.label)
+                                        || currentUser.role === 'admin' && ['Edit', 'View', 'Delete'].includes(actionButton.label)
+                                ).map(action => <Button key={action.label} text={action.label} onClick={action.onClick} />)
 
                                 }
 

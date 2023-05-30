@@ -10,9 +10,9 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState({
         email: "",
         name: "",
-        address: ""
+        address: "",
+        role: "user"
     })
-    const [users, setUsers] = useState([])
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     useEffect(() => {
@@ -23,14 +23,7 @@ export const UserProvider = ({ children }) => {
         console.log("Initialize User Provider")
         // restoring user from local storage
         try {
-            const userListString = window.localStorage.getItem("users")
             const userString = localStorage.getItem("currentUser")
-
-            if (!!userListString) {
-                const userArray = JSON.parse(userListString)
-                console.log(userArray)
-                setUsers(userArray)
-            }
 
             if (!!userString) {
                 const userObject = JSON.parse(userString)
@@ -44,7 +37,8 @@ export const UserProvider = ({ children }) => {
 
     const loginUser = async ({
         email,
-        password
+        password,
+        
     }) => {
         if (!password | !email) {
             return {
@@ -55,15 +49,17 @@ export const UserProvider = ({ children }) => {
         try {
             const userResponse = await loginUserApi({
                 email,
-                password
+                password,
             })
             console.log('userdata from backend', userResponse)
             localStorage.setItem("currentUser", JSON.stringify({
-                email
+                email,
+                role: userResponse.data.role
             }))
             localStorage.setItem("accessToken", userResponse.data.accessToken)
             setUser({
-                email
+                email,
+                role: userResponse.data.role
             })
             setIsLoggedIn(true)
     
@@ -83,9 +79,10 @@ export const UserProvider = ({ children }) => {
         email,
         address,
         password
+       
     }) => {
         const response = {}
-        if (!password | !email | !address | !name) {
+        if (!password || !email || !address || !name ) {
             response.error = "All fields are required"
             return response
         }
@@ -107,36 +104,30 @@ export const UserProvider = ({ children }) => {
             response.field = "email"
             return response
         }
-
-
-        setUsers(prev => {
-            const updatedUserArray = [
-                {
-                    name,
-                    email,
-                    address,
-                    password,
-                    createdAt: Date.now()
-                },
-                ...prev
-            ];
-
-            const userArrayAsString = JSON.stringify(updatedUserArray) //for converting object Array to string
-            window.localStorage.setItem("users", userArrayAsString) // store to local storage 
-            return updatedUserArray
-        })
         response.success = true
         return response
     }
 
+    const logoutUser = () => {
+        localStorage.removeItem("currentUser")
+        localStorage.removeItem("accessToken")
+        setUser({
+            email: "",
+            name: "",
+            address: "",
+            role: "user"
+        })
+        setIsLoggedIn(false)
+    }
+
     return <UserContext.Provider value={{
         user,
-        users,
         setUser,
         init,
         isLoggedIn,
         registerUser,
-        loginUser
+        loginUser,
+        logoutUser
     }} >
         {children}
     </UserContext.Provider>

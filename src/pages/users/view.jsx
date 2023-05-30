@@ -34,7 +34,12 @@ const ViewUser = () => {
             <Button text={"Users List"} />
        </Link>
         </div>
-        {data.name} {data.age}
+        <ul>
+          <li>Name: {data.name}</li>
+          <li>Age: {data.age}</li>
+          <li>Email: {data.email}</li>
+          <li>Address: {data.address}</li>
+        </ul>
         </Card>
     </Layout>
   )

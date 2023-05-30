@@ -10,16 +10,16 @@ const CreateOrEditUser = () => {
 
   const params = useParams()
   const navigate = useNavigate()
-  const {getUserById, createUser,editUser } = useUsers()
+  const { getUserById, createUser, editUser } = useUsers()
 
   const [data, setData] = useState({
     name: '',
     age: ''
   })
 
-  useEffect(()=>{
-    if(params.id){
-      getUserById(params.id).then((res)=>{
+  useEffect(() => {
+    if (params.id) {
+      getUserById(params.id).then((res) => {
         setData(res)
       })
     }
@@ -28,16 +28,19 @@ const CreateOrEditUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     let message;
-    if(params.id){
+    if (params.id) {
       await editUser({
         id: params.id,
         ...data,
       })
       message = "User updated successfully."
-    }else{
+    } else {
       await createUser({
         name: data.name,
-        age: data.age
+        age: data.age,
+        email: data.email,
+        address: data.address,
+        role: data.role
       })
       message = "User created successfully."
     }
@@ -51,54 +54,120 @@ const CreateOrEditUser = () => {
     <Layout>
       <Card>
         <div className='flex w-full justify-between items-center gap-8'>
-        <h1 className='text-2xl text-primary'>{params.id ? "Edit" : "Create"} user</h1>
+          <h1 className='text-2xl text-primary'>{params.id ? "Edit" : "Create"} user</h1>
 
-            <Link to="/users">
+          <Link to="/users">
             <Button text={"Users List"} />
-            </Link>
+          </Link>
         </div>
         <div>
           <form onSubmit={handleSubmit}>
+            {/* Name */}
             <div className="mb-4">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
               <div className="mt-1">
                 <input
-                type="text"
-                name="name"
-                value={data.name}
-                onChange={
-                  (e) => {
-                    setData({
-                      ...data,
-                      name: e.target.value
-                    })
+                  type="text"
+                  name="name"
+                  value={data.name}
+                  onChange={
+                    (e) => {
+                      setData({
+                        ...data,
+                        name: e.target.value
+                      })
+                    }
                   }
-                }
                 />
               </div>
-            
+
             </div>
+
+            {/* Email */}
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <div className="mt-1">
+                <input
+                  type="email"
+                  name="email"
+                  value={data.email}
+                  onChange={
+                    (e) => {
+                      setData({
+                        ...data,
+                        email: e.target.value
+                      })
+                    }
+                  }
+                />
+              </div>
+
+            </div>
+            {/* Address */}
+            <div className="mb-4">
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="address"
+                  value={data.address}
+                  onChange={
+                    (e) => {
+                      setData({
+                        ...data,
+                        address: e.target.value
+                      })
+                    }
+                  }
+                />
+              </div>
+
+            </div>
+            {/* Age */}
             <div className="mb-4">
               <label htmlFor="age" className="block text-sm font-medium text-gray-700">Age</label>
               <div className="mt-1">
                 <input
-                type="number"
-                name="age"
-                value={data.age}
-                onChange={
-                  (e) => {
-                    setData({
-                      ...data,
-                      age: e.target.value
-                    })
+                  type="number"
+                  name="age"
+                  value={data.age}
+                  onChange={
+                    (e) => {
+                      setData({
+                        ...data,
+                        age: e.target.value
+                      })
+                    }
                   }
-                }
                 />
               </div>
+            </div>
+
+            {/* Role */}
+            <div className='mb-4'>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+              <div className="mt-1">
+                <select
+                  name="role"
+                  value={data.role}
+                  onChange={
+                    (e) => {
+                      setData({
+                        ...data,
+                        role: e.target.value
+                      })
+                    }
+                  }
+                >
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </select>
               </div>
-              <div className="mb-4">
-                <Button text={params.id ? "Update" : "Create"}/>
-              </div>
+            </div>
+
+            <div className="mb-4">
+              <Button text={params.id ? "Update" : "Create"} />
+            </div>
           </form>
         </div>
       </Card>

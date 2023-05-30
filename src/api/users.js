@@ -18,7 +18,7 @@ import axiosInstance from "./axiosInstance"
 
 // completely asynchronos which returns promise as a whole
 export const loginUserApi = async ({
-    email, 
+    email,
     password
 }) => {
     const result = await axiosInstance.post("/api/login", {
@@ -29,41 +29,43 @@ export const loginUserApi = async ({
     return result.data
 }
 
+
+
+export const registerUserApi = async ({
+    name, password, email, address
+}) => {
+    const result = await axiosInstance.post("/api/register", {
+        name, password, email, address
+    })
+
+    return result.data
+}
+
 export const getUsers = async () => {
     //start
     const result = await axiosInstance.get("/api/users")  // fulfilled, rejected
     //stop
-    return result.data 
+    return result.data
 }
 
 // alternate way
-export const getUsersThroughCallback = ()=>{
+export const getUsersThroughCallback = () => {
     return axiosInstance.get("/api/users")
-    .then(res=>{
-        return res.data
-    })
+        .then(res => {
+            return res.data
+        })
 }
 
-export const postUser = async ({
-    name,
-    age
-}) => {
-    const result = await axiosInstance.post("/api/users", {
-        name,
-        age
-    })
+export const postUser = async (data) => {
+    const result = await axiosInstance.post("/api/users", data)
     return result.data
 }
 
 export const updateUser = async ({
     _id,
-    name,
-    age
+    ...data
 }) => {
-    const result = await axiosInstance.put(`/api/users/${_id}`, {
-        name,
-        age
-    })
+    const result = await axiosInstance.put(`/api/users/${_id}`, data)
     return result.data
 }
 
