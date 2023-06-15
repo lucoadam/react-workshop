@@ -3,12 +3,14 @@ import About from "../pages/about";
 import Contact from "../pages/contact";
 import ContextPage from "../pages/context";
 import ItemsPage from "../pages/items";
+import Login from "../pages/login";
 import Page404 from "../pages/Page404";
 import UsersPage from "../pages/users";
 import CreateOrEditUser from "../pages/users/createOrEdit";
 import ViewUser from "../pages/users/view";
 
-export const routes = [
+
+const unauthorizedRoutes = [
   {
     path: "/",
     element: <Index />,
@@ -29,6 +31,14 @@ export const routes = [
     element: <Page404 />,
   },
   {
+    path: "/login",
+    name: "Login",
+    element: <Login />,
+  }
+]
+
+let authorizedRoutes = [
+  {
     name: "Context",
     path: "/context",
     element: <ContextPage/>
@@ -43,16 +53,29 @@ export const routes = [
     name: "Users",
     element: <UsersPage/>
   },
-  {
-    path: "/users/create",
-    element: <CreateOrEditUser/>
-  },
+ 
   {
     path: "/users/:id",
     element: <ViewUser/>
   },
   {
-    path: "/users/:id/edit",
-    element: <CreateOrEditUser/>
+    path: "/users/create",
+    element: <CreateOrEditUser/>,
+    roles: ["superadmin", "admin"]
   },
+  {
+    path: "/users/:id/edit",
+    element: <CreateOrEditUser/>,
+    roles: ["superadmin", "admin"]
+  },
+]
+
+authorizedRoutes = authorizedRoutes.map(each=>({
+  ...each,
+  auth: true
+}))
+console.log(authorizedRoutes, 'authorizedRoutes')
+export const routes = [
+  ...unauthorizedRoutes,
+  ...authorizedRoutes  
 ];

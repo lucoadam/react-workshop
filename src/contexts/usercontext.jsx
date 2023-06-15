@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react"
-import { loginUserApi } from "../api/users"
+import { createContext, useContext, useEffect, useMemo, useState } from "react"
+import { loginUserApi, registerUserApi } from "../api/users"
+import { useNavigate } from "react-router-dom"
 
 export const UserContext = createContext()
 
@@ -7,13 +8,17 @@ export const useUserContext = () => useContext(UserContext)
 
 
 export const UserProvider = ({ children }) => {
+    const navigate = useNavigate()
     const [user, setUser] = useState({
         email: "",
         name: "",
         address: "",
         role: "user"
     })
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const isLoggedIn = useMemo(() => {
+        console.log("User", user)
+        return !!user?.email
+    }, [user])
 
     useEffect(() => {
         init()
@@ -28,7 +33,6 @@ export const UserProvider = ({ children }) => {
             if (!!userString) {
                 const userObject = JSON.parse(userString)
                 setUser(userObject)
-                setIsLoggedIn(true)
             }
         } catch (e) {
             console.log(e)
@@ -61,7 +65,6 @@ export const UserProvider = ({ children }) => {
                 email,
                 role: userResponse.data.role
             })
-            setIsLoggedIn(true)
     
             return {
                 success: true
@@ -74,7 +77,7 @@ export const UserProvider = ({ children }) => {
         }      
     }
 
-    const registerUser = ({
+    const registerUser = async ({
         name,
         email,
         address,
@@ -99,13 +102,20 @@ export const UserProvider = ({ children }) => {
             return response
         }
 
-        if (users.filter(usr => usr.email === email).length > 0) {
-            response.error = "User with the email already exists"
-            response.field = "email"
+        try{
+            const userResponse = await registerUserApi({
+                name,
+                email,
+                address,
+                password
+            })
+            console.log('userdata from backend', userResponse)
+            response.success = true
+            return response
+        }catch(e){
+            response.error = e?.response?.data?.message ?? "Something went wrong"
             return response
         }
-        response.success = true
-        return response
     }
 
     const logoutUser = () => {
@@ -117,7 +127,7 @@ export const UserProvider = ({ children }) => {
             address: "",
             role: "user"
         })
-        setIsLoggedIn(false)
+        navigate("/login")
     }
 
     return <UserContext.Provider value={{

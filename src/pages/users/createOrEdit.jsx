@@ -5,12 +5,21 @@ import Card from '../../components/card'
 import Button from '../../components/button'
 import { useUsers } from '../../hooks/useUsers'
 import { toast } from 'react-hot-toast'
+import { useUserContext } from '../../contexts/usercontext'
 
 const CreateOrEditUser = () => {
 
   const params = useParams()
   const navigate = useNavigate()
   const { getUserById, createUser, editUser } = useUsers()
+  // page specific access control
+  // const {user: currentUser} = useUserContext()
+
+  // useEffect(()=>{
+  //   if(currentUser.role !== 'admin'){
+  //     navigate('/users')
+  //   }
+  // }, [currentUser.role])
 
   const [data, setData] = useState({
     name: '',
